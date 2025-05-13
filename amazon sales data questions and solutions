@@ -1,0 +1,90 @@
+Q1) What are the sales over the months?
+SELECT
+SUM(CASE
+   WHEN "Date" BETWEEN '2025-01-01' AND '2025-01-31'
+   THEN "Total Sales"
+   ELSE 0
+   END) AS january,
+SUM (CASE
+	WHEN "Date" BETWEEN '2025-02-01' AND '2025-02-28'
+	THEN "Total Sales"
+	ELSE 0
+	END) AS february,
+SUM (CASE
+	WHEN "Date" BETWEEN '2025-03-01' AND '2025-03-31'
+	THEN "Total Sales"
+	ELSE 0
+	END) AS march,
+SUM (CASE
+	WHEN "Date" BETWEEN '2025-04-01' AND '2025-04-30'
+	THEN "Total Sales"
+	ELSE 0
+	END) AS april
+FROM sales_data;
+
+Q2) Which product had the highest and lowest total sales ?
+
+SELECT "Product", SUM("Total Sales") AS total_sales
+FROM sales_data
+GROUP BY "Product"
+ORDER BY total_sales DESC;
+
+Q3) What is the average order value?
+
+SELECT SUM("Total Sales")/ COUNT("Order ID") AS average_order_value FROM sales_data;
+
+Q4) What is the most common payment methods used?
+
+SELECT "Payment Method",COUNT("Payment Method") AS most_common FROM sales_data
+GROUP BY "Payment Method"
+ORDER BY most_common DESC
+LIMIT 1;
+
+Q5) Which customer location generate the most sales?
+
+SELECT "Customer Location", COUNT("Customer Location") AS most_ordered FROM sales_data
+GROUP BY "Customer Location"
+ORDER BY most_ordered DESC
+LIMIT 1;
+
+Q6) Which is the most popular category?
+
+SELECT "Category", COUNT("Category") AS most_popular FROM sales_data
+GROUP  BY "Category"
+ORDER BY most_popular DESC;
+
+Q7) Are certain categories conisistently underperforming?
+
+SELECT
+  "Category",
+  DATE_TRUNC('month', "Date") AS month,
+  SUM("Total Sales") AS total_sales
+FROM sales_data
+GROUP BY "Category", month
+ORDER BY "Category", month;
+
+Q8) Is there a relationship between payment method and order status?
+
+SELECT "Payment Method", "Status", COUNT("Status") AS count FROM sales_data
+GROUP BY "Payment Method", "Status"
+ORDER BY "Payment Method", "Status";
+
+Q9) Are cancellations more frequent in certain locations?
+
+SELECT "Customer Location" , COUNT("Status") AS cancelled FROM sales_data
+WHERE "Status" = 'Cancelled'
+GROUP BY "Customer Location";
+
+Q10) Who are the top 5 customers by sales ?
+
+SELECT "Customer Name", SUM("Total Sales") AS sales  FROM sales_data
+GROUP BY "Customer Name"
+ORDER BY sales DESC
+LIMIT 5;
+
+Q11) Which category has sold most quantity and in which location?
+
+SELECT "Customer Location", "Category", SUM ("Quantity") AS total_quantity_sold FROM sales_data
+GROUP BY "Customer Location", "Category"
+ORDER BY total_quantity_sold DESC
+LIMIT 1;
